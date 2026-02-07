@@ -1,0 +1,56 @@
+{
+  "name": "session-forge",
+  "version": "1.0.0",
+  "description": "Session intelligence for AI coding assistants. Persistent memory, decisions, dead ends, crash recovery. Zero infrastructure.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "session-forge": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "windsurf",
+    "ai-memory",
+    "session-management",
+    "dead-ends",
+    "decisions",
+    "coding-assistant",
+    "developer-tools"
+  ],
+  "author": "Jacob Terrell",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/420247jake/session-forge"
+  },
+  "homepage": "https://github.com/420247jake/session-forge#readme",
+  "bugs": {
+    "url": "https://github.com/420247jake/session-forge/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1"
+  }
+}
