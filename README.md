@@ -163,4 +163,4 @@ MIT
 
 ---
 
-Built by [Jacob Terrell](https://github.com/jacobterrell)
+Built by [Jacob Terrell](https://github.com/420247jake)
