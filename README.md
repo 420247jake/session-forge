@@ -45,7 +45,7 @@ That's it. No database, no Docker, no config files.
 
 ---
 
-## The 13 tools
+## The 15 tools
 
 ### Sessions
 
@@ -94,12 +94,19 @@ That's it. No database, no Docker, no config files.
 | Tool | Description | Required |
 |------|-------------|----------|
 | `data_manage` | Prune old entries, export all data, clear stores, or view stats | action |
+| `data_list` | Browse stored entries with numbered summaries. Supports search filter. | store |
+| `data_delete` | Delete a specific entry by index from `data_list` output | store, entry_index |
 
 **`data_manage` actions:**
 - `stats` — entry counts and schema versions for all stores
 - `export` — dump all data as JSON
 - `prune` — remove entries older than N days (default: 90)
 - `clear` — wipe a specific store (journal, decisions, dead_ends, profile, or all)
+
+**`data_list` + `data_delete` workflow:**
+1. `data_list` with store="decisions" — see numbered list of all decisions
+2. `data_list` with store="decisions", query="minecraft" — filter by keyword
+3. `data_delete` with store="decisions", entry_index=3 — remove entry #3 from the list
 
 ---
 
@@ -115,7 +122,7 @@ That's it. No database, no Docker, no config files.
 | User profile | Yes | Some | No |
 | Dependencies | 2 (SDK + zod) | Varies | 5-10+ |
 | Infrastructure | Zero (plain JSON) | SQLite/ONNX/Vector DB | PostgreSQL + Redis |
-| Tools | 13 focused | 4-9 | 37+ |
+| Tools | 15 focused | 4-9 | 37+ |
 
 ---
 
@@ -185,6 +192,11 @@ Add this to your project's `CLAUDE.md` to teach the AI when to call each tool:
 ---
 
 ## Changelog
+
+### v1.2.0
+- Added `data_list` tool — browse stored entries with numbered summaries, optional search filter
+- Added `data_delete` tool — surgically remove individual entries by index
+- Users can now see exactly what's stored and delete anything they want
 
 ### v1.1.0
 - Added `data_manage` tool (stats, export, prune by age, clear per-store)
