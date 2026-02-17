@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
 import { readJson, writeJson, searchEntries } from "../storage/store.js";
 import type { DeadEndEntry, DeadEndsData } from "../types.js";
+import { SCHEMA_VERSION } from "../types.js";
 
 export function registerDeadEndTools(server: McpServer): void {
   server.registerTool(
@@ -46,6 +47,7 @@ export function registerDeadEndTools(server: McpServer): void {
         data.dead_ends = data.dead_ends.slice(-100);
       }
 
+      data.schema_version = SCHEMA_VERSION;
       writeJson(PATHS.deadEnds, data);
 
       return {
@@ -65,19 +67,27 @@ export function registerDeadEndTools(server: McpServer): void {
       description: "Search past dead ends to avoid repeating mistakes",
       inputSchema: {
         query: z.string().describe("Search term"),
+        limit: z
+          .number()
+          .optional()
+          .describe("Max results to return (default 20)"),
       },
     },
     async (params) => {
       const data = readJson<DeadEndsData>(PATHS.deadEnds, { dead_ends: [] });
 
-      const results = searchEntries(data.dead_ends, params.query, (d) =>
-        [
-          d.attempted,
-          d.why_failed,
-          d.lesson,
-          d.project ?? "",
-          ...d.tags,
-        ].join(" ")
+      const results = searchEntries(
+        data.dead_ends,
+        params.query,
+        (d) =>
+          [
+            d.attempted,
+            d.why_failed,
+            d.lesson,
+            d.project ?? "",
+            ...d.tags,
+          ].join(" "),
+        params.limit ?? 20
       );
 
       return {

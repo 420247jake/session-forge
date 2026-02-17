@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
 import { readJson } from "../storage/store.js";
@@ -29,9 +30,14 @@ export function registerContextTools(server: McpServer): void {
     {
       description:
         "Get EVERYTHING - user profile, recent sessions, decisions, dead ends. Use when starting fresh to get full context.",
-      inputSchema: {},
+      inputSchema: {
+        project: z
+          .string()
+          .optional()
+          .describe("Filter decisions and dead ends by project name"),
+      },
     },
-    async () => {
+    async (params) => {
       const profile = readJson<UserProfile>(PATHS.profile, {
         ...DEFAULT_PROFILE,
         created_at: new Date().toISOString(),
@@ -46,11 +52,24 @@ export function registerContextTools(server: McpServer): void {
         dead_ends: [],
       });
 
+      let filteredDecisions = decisions.decisions;
+      let filteredDeadEnds = deadEnds.dead_ends;
+
+      if (params.project) {
+        const proj = params.project.toLowerCase();
+        filteredDecisions = filteredDecisions.filter(
+          (d) => d.project?.toLowerCase().includes(proj)
+        );
+        filteredDeadEnds = filteredDeadEnds.filter(
+          (d) => d.project?.toLowerCase().includes(proj)
+        );
+      }
+
       const context: FullContext = {
         user_profile: profile,
         recent_sessions: journal.sessions.slice(-3),
-        recent_decisions: decisions.decisions.slice(-10),
-        recent_dead_ends: deadEnds.dead_ends.slice(-10),
+        recent_decisions: filteredDecisions.slice(-10),
+        recent_dead_ends: filteredDeadEnds.slice(-10),
         retrieved_at: new Date().toISOString(),
       };
 

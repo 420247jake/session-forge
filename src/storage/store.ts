@@ -5,7 +5,8 @@ export function readJson<T>(filePath: string, fallback: T): T {
   try {
     if (!existsSync(filePath)) return fallback;
     return JSON.parse(readFileSync(filePath, "utf-8")) as T;
-  } catch {
+  } catch (err) {
+    console.error(`[session-forge] Failed to read ${filePath}:`, err);
     return fallback;
   }
 }
@@ -31,19 +32,20 @@ export function deleteJson(filePath: string): boolean {
 export function searchEntries<T>(
   entries: T[],
   query: string,
-  textExtractor: (entry: T) => string
+  textExtractor: (entry: T) => string,
+  limit: number = 20
 ): T[] {
   const words = query
     .toLowerCase()
     .split(/\s+/)
     .filter((w) => w.length > 1);
 
-  if (words.length === 0) return entries.slice(-20);
+  if (words.length === 0) return entries.slice(-limit);
 
   const filtered = entries.filter((entry) => {
     const text = textExtractor(entry).toLowerCase();
     return words.some((word) => text.includes(word));
   });
 
-  return filtered.slice(-20);
+  return filtered.slice(-limit);
 }

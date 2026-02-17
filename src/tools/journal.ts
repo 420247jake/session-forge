@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
 import { readJson, writeJson } from "../storage/store.js";
 import type { JournalEntry, JournalData } from "../types.js";
+import { SCHEMA_VERSION } from "../types.js";
 
 export function registerJournalTools(server: McpServer): void {
   server.registerTool(
@@ -62,6 +63,7 @@ export function registerJournalTools(server: McpServer): void {
         data.sessions = data.sessions.slice(-100);
       }
 
+      data.schema_version = SCHEMA_VERSION;
       writeJson(PATHS.journal, data);
 
       return {

@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
 import { readJson, writeJson, searchEntries } from "../storage/store.js";
 import type { DecisionEntry, DecisionsData } from "../types.js";
+import { SCHEMA_VERSION } from "../types.js";
 
 export function registerDecisionTools(server: McpServer): void {
   server.registerTool(
@@ -51,6 +52,7 @@ export function registerDecisionTools(server: McpServer): void {
         data.decisions = data.decisions.slice(-200);
       }
 
+      data.schema_version = SCHEMA_VERSION;
       writeJson(PATHS.decisions, data);
 
       return {
@@ -71,6 +73,10 @@ export function registerDecisionTools(server: McpServer): void {
         "Search past decisions to understand why things are the way they are",
       inputSchema: {
         query: z.string().describe("Search term"),
+        limit: z
+          .number()
+          .optional()
+          .describe("Max results to return (default 20)"),
       },
     },
     async (params) => {
@@ -78,8 +84,11 @@ export function registerDecisionTools(server: McpServer): void {
         decisions: [],
       });
 
-      const results = searchEntries(data.decisions, params.query, (d) =>
-        [d.choice, d.reasoning, d.project ?? "", ...d.tags].join(" ")
+      const results = searchEntries(
+        data.decisions,
+        params.query,
+        (d) => [d.choice, d.reasoning, d.project ?? "", ...d.tags].join(" "),
+        params.limit ?? 20
       );
 
       return {

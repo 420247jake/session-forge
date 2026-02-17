@@ -7,8 +7,9 @@ import { registerJournalTools } from "./tools/journal.js";
 import { registerDecisionTools } from "./tools/decisions.js";
 import { registerDeadEndTools } from "./tools/dead-ends.js";
 import { registerContextTools } from "./tools/context.js";
+import { registerDataManageTools } from "./tools/data-manage.js";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 
 const server = new McpServer({
   name: "session-forge",
@@ -21,6 +22,7 @@ registerJournalTools(server);
 registerDecisionTools(server);
 registerDeadEndTools(server);
 registerContextTools(server);
+registerDataManageTools(server);
 
 async function main(): Promise<void> {
   const transport = new StdioServerTransport();

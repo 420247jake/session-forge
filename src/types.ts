@@ -22,6 +22,10 @@ export interface UserProfile {
   updated_at: string;
 }
 
+// ---- Schema Version ----
+
+export const SCHEMA_VERSION = 1;
+
 // ---- Journal ----
 
 export interface JournalEntry {
@@ -35,6 +39,7 @@ export interface JournalEntry {
 }
 
 export interface JournalData {
+  schema_version?: number;
   sessions: JournalEntry[];
 }
 
@@ -51,6 +56,7 @@ export interface DecisionEntry {
 }
 
 export interface DecisionsData {
+  schema_version?: number;
   decisions: DecisionEntry[];
 }
 
@@ -67,6 +73,7 @@ export interface DeadEndEntry {
 }
 
 export interface DeadEndsData {
+  schema_version?: number;
   dead_ends: DeadEndEntry[];
 }
 

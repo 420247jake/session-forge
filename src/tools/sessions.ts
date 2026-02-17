@@ -112,7 +112,8 @@ export function registerSessionTools(server: McpServer): void {
         (Date.now() - new Date(checkpoint.timestamp).getTime()) /
         (1000 * 60 * 60);
 
-      if (ageHours > 24) {
+      const staleHours = Number(process.env.SESSION_FORGE_STALE_HOURS) || 24;
+      if (ageHours > staleHours) {
         archiveCheckpoint(checkpoint);
         deleteJson(PATHS.activeSession);
 
