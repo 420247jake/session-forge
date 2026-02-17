@@ -16,6 +16,7 @@ Works with **Claude Code**, **Cursor**, **Windsurf**, and any MCP-compatible cli
 - **User profile** — AI remembers your name, preferences, and projects
 - **Session journal** — capture the journey, not just the task
 - **Full context recall** — bootstrap a new session with everything in one call
+- **Data management** — prune old entries, export all data, view stats
 
 ## Quick start
 
@@ -44,7 +45,7 @@ That's it. No database, no Docker, no config files.
 
 ---
 
-## The 12 tools
+## The 13 tools
 
 ### Sessions
 
@@ -73,20 +74,32 @@ That's it. No database, no Docker, no config files.
 | Tool | Description | Required |
 |------|-------------|----------|
 | `decision_record` | Log a significant decision with alternatives and reasoning | choice, reasoning |
-| `decision_search` | Search past decisions by keyword | query |
+| `decision_search` | Search past decisions by keyword (supports `limit` param) | query |
 
 ### Dead Ends
 
 | Tool | Description | Required |
 |------|-------------|----------|
 | `dead_end_record` | Log a failed approach and the lesson learned | attempted, why_failed |
-| `dead_end_search` | Search past dead ends to avoid repeating mistakes | query |
+| `dead_end_search` | Search past dead ends to avoid repeating mistakes (supports `limit` param) | query |
 
 ### Context
 
 | Tool | Description | Required |
 |------|-------------|----------|
-| `full_context_recall` | Get everything — profile, journals, decisions, dead ends | — |
+| `full_context_recall` | Get everything — profile, journals, decisions, dead ends. Supports optional `project` filter. | — |
+
+### Data Management
+
+| Tool | Description | Required |
+|------|-------------|----------|
+| `data_manage` | Prune old entries, export all data, clear stores, or view stats | action |
+
+**`data_manage` actions:**
+- `stats` — entry counts and schema versions for all stores
+- `export` — dump all data as JSON
+- `prune` — remove entries older than N days (default: 90)
+- `clear` — wipe a specific store (journal, decisions, dead_ends, profile, or all)
 
 ---
 
@@ -98,10 +111,22 @@ That's it. No database, no Docker, no config files.
 | Dead end tracking | Yes | No | No |
 | Decision logging | Yes | No | Some |
 | Session crash recovery | Yes | Some | Yes |
+| Data management | Yes | No | Some |
 | User profile | Yes | Some | No |
 | Dependencies | 2 (SDK + zod) | Varies | 5-10+ |
 | Infrastructure | Zero (plain JSON) | SQLite/ONNX/Vector DB | PostgreSQL + Redis |
-| Tools | 12 focused | 4-9 | 37+ |
+| Tools | 13 focused | 4-9 | 37+ |
+
+---
+
+## Configuration
+
+### Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SESSION_FORGE_DIR` | `~/.session-forge` or `%APPDATA%\session-forge` | Override data storage location |
+| `SESSION_FORGE_STALE_HOURS` | `24` | Hours before an inactive session is auto-archived |
 
 ---
 
@@ -132,6 +157,8 @@ Files:
     history/          # Archived sessions
 ```
 
+Data files include a `schema_version` field for future migration support.
+
 ---
 
 ## CLAUDE.md template
@@ -154,6 +181,22 @@ Add this to your project's `CLAUDE.md` to teach the AI when to call each tool:
 1. Call `journal_entry` — record what happened
 2. Call `session_complete` — archive the checkpoint
 ```
+
+---
+
+## Changelog
+
+### v1.1.0
+- Added `data_manage` tool (stats, export, prune by age, clear per-store)
+- Added `project` filter to `full_context_recall`
+- Added `limit` param to `decision_search` and `dead_end_search`
+- Added error logging to JSON reads (was silently swallowing parse failures)
+- Added configurable stale session timeout via `SESSION_FORGE_STALE_HOURS`
+- Added `schema_version` to data files for future migration support
+- Fixed version mismatch between code and package.json
+
+### v1.0.2
+- Initial public release
 
 ---
 
