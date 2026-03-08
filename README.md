@@ -193,6 +193,18 @@ Add this to your project's `CLAUDE.md` to teach the AI when to call each tool:
 
 ## Changelog
 
+### v2.0.1
+- Added disclaimer: session-forge is NOT affiliated with SessionForge LLC (sessionforge.dev)
+
+### v2.0.0
+- **Knowledge Graph** — link decisions and dead ends together with `related_dead_ends` and `led_to_decision` fields
+- **Scored Search** — fuzzy matching, tag filtering, AND/OR search modes, relevance scoring (replaces basic string matching)
+- **Usage Stats** — tracks dead ends avoided, searches performed, sessions recovered
+- **MEMORY.md Sync** — `full_context_recall` can read your MEMORY.md and suggest decisions/dead ends that should be saved to memory
+- **Enhanced Checkpoints** — now tracks `errors_encountered`, `key_findings`, `decisions_made`, `dead_ends_hit`
+- New storage modules: `links.js`, `search.js`, `stats.js`, `migrate.js`
+- Schema bumped to v2
+
 ### v1.2.0
 - Added `data_list` tool — browse stored entries with numbered summaries, optional search filter
 - Added `data_delete` tool — surgically remove individual entries by index
