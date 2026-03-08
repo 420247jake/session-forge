@@ -19,6 +19,8 @@ export const PATHS = {
   journal: join(base, "journal.json"),
   decisions: join(base, "decisions.json"),
   deadEnds: join(base, "dead-ends.json"),
+  links: join(base, "links.json"),
+  stats: join(base, "stats.json"),
   sessions: join(base, "sessions"),
   activeSession: join(base, "sessions", "active.json"),
   sessionHistory: join(base, "sessions", "history"),

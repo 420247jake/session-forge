@@ -1,7 +1,7 @@
 {
   "name": "session-forge",
-  "version": "1.2.0",
-  "description": "Session intelligence for AI coding assistants. Persistent memory, decisions, dead ends, crash recovery. Zero infrastructure.",
+  "version": "2.0.1",
+  "description": "Session intelligence for AI coding assistants. Persistent memory, knowledge graph, smart search, dead ends, crash recovery. Zero infrastructure.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

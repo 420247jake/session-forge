@@ -24,7 +24,7 @@ export interface UserProfile {
 
 // ---- Schema Version ----
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 // ---- Journal ----
 
@@ -53,6 +53,7 @@ export interface DecisionEntry {
   outcome: string | null;
   project: string | null;
   tags: string[];
+  related_dead_ends?: string[];
 }
 
 export interface DecisionsData {
@@ -70,6 +71,7 @@ export interface DeadEndEntry {
   project: string | null;
   files_involved: string[];
   tags: string[];
+  led_to_decision?: string | null;
 }
 
 export interface DeadEndsData {
@@ -91,6 +93,79 @@ export interface SessionCheckpoint {
   tool_call_count: number;
   completed_at?: string;
   summary?: string;
+  errors_encountered?: string[];
+  key_findings?: string[];
+  decisions_made?: string[];
+  dead_ends_hit?: string[];
+}
+
+// ---- Knowledge Links ----
+
+export interface KnowledgeLink {
+  from_type: "decision" | "dead_end" | "journal";
+  from_timestamp: string;
+  to_type: "decision" | "dead_end" | "journal";
+  to_timestamp: string;
+  reason: string;
+  created_at: string;
+}
+
+export interface LinksData {
+  schema_version?: number;
+  links: KnowledgeLink[];
+}
+
+// ---- Usage Stats ----
+
+export interface UsageStats {
+  total_checkpoints: number;
+  total_sessions_recovered: number;
+  total_decisions_recorded: number;
+  total_dead_ends_recorded: number;
+  total_searches: number;
+  dead_ends_avoided: number;
+  decisions_referenced: number;
+  weekly_dead_ends_avoided: number;
+  weekly_searches: number;
+  week_start: string;
+  last_updated: string;
+}
+
+export interface StatsData {
+  schema_version?: number;
+  stats: UsageStats;
+}
+
+// ---- Search ----
+
+export interface SearchOptions {
+  mode?: "or" | "and";
+  tags?: string[];
+  project?: string;
+  limit?: number;
+  fuzzy?: boolean;
+}
+
+export interface ScoredResult<T> {
+  entry: T;
+  score: number;
+  match_reasons: string[];
+}
+
+export interface TextFields {
+  text: string;
+  tags?: string[];
+  project?: string | null;
+  timestamp?: string;
+}
+
+// ---- Memory Sync ----
+
+export interface MemorySyncSuggestion {
+  type: "decision" | "dead_end" | "preference";
+  summary: string;
+  detail: string;
+  source_timestamp?: string;
 }
 
 // ---- Full Context ----
@@ -100,5 +175,8 @@ export interface FullContext {
   recent_sessions: JournalEntry[];
   recent_decisions: DecisionEntry[];
   recent_dead_ends: DeadEndEntry[];
+  linked_context?: KnowledgeLink[];
+  memory_md?: string | null;
+  memory_sync_suggestions?: MemorySyncSuggestion[];
   retrieved_at: string;
 }

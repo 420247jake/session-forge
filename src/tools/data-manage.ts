@@ -1,13 +1,17 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
-import { readJson, writeJson, searchEntries } from "../storage/store.js";
+import { readJson, writeJson } from "../storage/store.js";
+import { searchEntries } from "../storage/search.js";
+import { getStats } from "../storage/stats.js";
+import { getAllLinks } from "../storage/links.js";
 import type {
   UserProfile,
   JournalData,
   DecisionsData,
   DeadEndsData,
   SessionCheckpoint,
+  LinksData,
   JournalEntry,
   DecisionEntry,
   DeadEndEntry,
@@ -67,16 +71,40 @@ export function registerDataManageTools(server: McpServer): void {
             PATHS.activeSession,
             null
           );
+          const links = getAllLinks();
+          const usageStats = getStats();
+
+          const timeSavedMinutes = usageStats.dead_ends_avoided * 25;
+          const hours = Math.floor(timeSavedMinutes / 60);
+          const mins = timeSavedMinutes % 60;
 
           const stats = {
-            journal_entries: journal.sessions.length,
-            decisions: decisions.decisions.length,
-            dead_ends: deadEnds.dead_ends.length,
-            has_active_session: !!checkpoint,
+            data_counts: {
+              journal_entries: journal.sessions.length,
+              decisions: decisions.decisions.length,
+              dead_ends: deadEnds.dead_ends.length,
+              knowledge_links: links.length,
+              has_active_session: !!checkpoint,
+            },
             schema_versions: {
               journal: (journal as { schema_version?: number }).schema_version ?? "none",
               decisions: (decisions as { schema_version?: number }).schema_version ?? "none",
               dead_ends: (deadEnds as { schema_version?: number }).schema_version ?? "none",
+            },
+            usage: {
+              total_checkpoints: usageStats.total_checkpoints,
+              total_sessions_recovered: usageStats.total_sessions_recovered,
+              total_decisions_recorded: usageStats.total_decisions_recorded,
+              total_dead_ends_recorded: usageStats.total_dead_ends_recorded,
+              total_searches: usageStats.total_searches,
+              dead_ends_avoided: usageStats.dead_ends_avoided,
+              decisions_referenced: usageStats.decisions_referenced,
+              estimated_time_saved: timeSavedMinutes > 0 ? `~${hours}h ${mins}m` : "none yet",
+            },
+            this_week: {
+              week_start: usageStats.week_start,
+              searches: usageStats.weekly_searches,
+              dead_ends_avoided: usageStats.weekly_dead_ends_avoided,
             },
           };
 

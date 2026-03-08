@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { PATHS } from "../storage/paths.js";
 import { readJson, writeJson, deleteJson } from "../storage/store.js";
+import { incrementStat } from "../storage/stats.js";
 import type { SessionCheckpoint } from "../types.js";
 
 function archiveCheckpoint(checkpoint: SessionCheckpoint): void {
@@ -41,6 +42,22 @@ export function registerSessionTools(server: McpServer): void {
           .number()
           .optional()
           .describe("Approx tool calls so far"),
+        errors_encountered: z
+          .array(z.string())
+          .optional()
+          .describe("Exact error messages hit during this session"),
+        key_findings: z
+          .array(z.string())
+          .optional()
+          .describe("Important discoveries made during this session"),
+        decisions_made: z
+          .array(z.string())
+          .optional()
+          .describe("Timestamps of decisions recorded this session"),
+        dead_ends_hit: z
+          .array(z.string())
+          .optional()
+          .describe("Timestamps of dead ends recorded this session"),
       },
     },
     async (params) => {
@@ -54,9 +71,14 @@ export function registerSessionTools(server: McpServer): void {
         next_steps: params.next_steps,
         context: params.context ?? {},
         tool_call_count: params.tool_call_count ?? 0,
+        errors_encountered: params.errors_encountered ?? [],
+        key_findings: params.key_findings ?? [],
+        decisions_made: params.decisions_made ?? [],
+        dead_ends_hit: params.dead_ends_hit ?? [],
       };
 
       writeJson(PATHS.activeSession, checkpoint);
+      incrementStat("total_checkpoints");
 
       return {
         content: [
@@ -136,6 +158,7 @@ export function registerSessionTools(server: McpServer): void {
       }
 
       const ageMinutes = Math.round(ageHours * 60);
+      incrementStat("total_sessions_recovered");
 
       return {
         content: [

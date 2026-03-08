@@ -218,4 +218,18 @@ MIT
 
 ---
 
+## Important Notice
+
+**session-forge is NOT affiliated with SessionForge LLC (sessionforge.dev).**
+
+session-forge was first published on npm on **February 7, 2026** — before SessionForge LLC appeared. We have no connection to their product or company.
+
+Here's why this matters: session-forge stores all your data **locally on your machine** as plain JSON files. Nothing leaves your computer. No accounts, no servers, no third parties.
+
+Any service asking you to route your AI session data, coding habits, and terminal access through their servers should make you ask: **who has access to that data, and what are they doing with it?**
+
+Your workflow, your decisions, your code — that's yours. It should stay on your machine, under your control. That's how session-forge was built and that's how it will stay.
+
+---
+
 Built by [Jacob Terrell](https://github.com/420247jake)
