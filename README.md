@@ -1,3 +1,4 @@
+<!-- mcp-name: io.github.420247jake/session-forge -->
 # session-forge
 
 **Never start from zero.** Persistent session intelligence for AI coding assistants.

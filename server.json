@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.420247jake/session-forge",
+  "title": "Session Forge",
+  "description": "Session intelligence for AI coding assistants. Persistent memory, decision tracking, dead end logging, crash recovery, and cross-session knowledge graphs. Zero infrastructure — works with Claude Code, Cursor, Windsurf, and any MCP-compatible client.",
+  "repository": {
+    "url": "https://github.com/420247jake/session-forge",
+    "source": "github"
+  },
+  "version": "2.0.3",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "session-forge",
+      "version": "2.0.3",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
